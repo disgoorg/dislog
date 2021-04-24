@@ -28,7 +28,7 @@ Import the package into your project.
 import "github.com/DisgoOrg/dislog"
 ```
 
-Create a new [logrus](https://github.com/sirupsen/logrus) logger then create a new dislog instance by passing a http.Client(*pass nil for default client*), the logrus.Loglevel for the underlying webhook and webhook token `webhook_id/webhook_token`.
+Create a new [logrus](https://github.com/sirupsen/logrus) logger then create a new dislog instance by passing a http.Client(*pass nil for default client*), the `logrus.Loglevel` for the underlying webhook and webhook token `webhook_id/webhook_token`.
 
 ```go
 logger := logrus.New()
