@@ -34,8 +34,8 @@ Create a new Webhook by `webhook_id/webhook_token` and pass a [logger](https://g
 logger := logrus.New()
 dlog, err := dislog.NewDisLogByToken(nil, logrus.InfoLevel, os.Getenv("webhook_token"), dislog.TraceLevelAndAbove...)
 if err != nil {
-logger.Errorf("error initializing dislog %s", err)
-return
+    logger.Errorf("error initializing dislog %s", err)
+    return
 }
 defer dlog.Close()
 logger.AddHook(dlog)
