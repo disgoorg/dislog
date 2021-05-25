@@ -1,7 +1,7 @@
 # dislog
 
 [![Go Reference](https://pkg.go.dev/badge/github.com/DisgoOrg/dislog.svg)](https://pkg.go.dev/github.com/DisgoOrg/dislog)
-[![Go Report](http://goreportcard.com/badge/DisgoOrg/dislog)](https://goreportcard.com/report/DisgoOrg/dislog)
+[![Go Report](https://goreportcard.com/badge/github.com/DisgoOrg/dislog)](https://goreportcard.com/report/github.com/DisgoOrg/dislog)
 [![Go Version](https://img.shields.io/github/go-mod/go-version/DisgoOrg/dislog)](https://golang.org/doc/devel/release.html)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/DisgoOrg/dislog/blob/master/LICENSE)
 [![Disgo Version](https://img.shields.io/github/v/release/DisgoOrg/dislog)](https://github.com/DisgoOrg/dislog/releases/latest)
