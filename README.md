@@ -14,8 +14,6 @@ dislog is a [logrus](https://github.com/sirupsen/logrus) [logging hook](https://
 
 ### Installing
 
-`go get`
-
 ```sh
 go get github.com/DisgoOrg/dislog
 ```
