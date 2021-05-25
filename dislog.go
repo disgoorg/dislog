@@ -9,6 +9,7 @@ import (
 
 	"github.com/DisgoOrg/disgohook"
 	"github.com/DisgoOrg/disgohook/api"
+	"github.com/DisgoOrg/log"
 	"github.com/sirupsen/logrus"
 )
 
@@ -47,41 +48,46 @@ var (
 	_ logrus.Hook = (*DisLog)(nil)
 )
 
-func NewDisLogByToken(client *http.Client, webhookLogLevel logrus.Level, webhookToken string, levels ...logrus.Level) (*DisLog, error) {
+func newDisLog(webhookLogLevel logrus.Level, webhookClientCreate func(logger log.Logger) (api.WebhookClient, error), levels ...logrus.Level) (*DisLog, error) {
 	logger := logrus.New()
 	logger.SetLevel(webhookLogLevel)
-	webhook, err := disgohook.NewWebhookByToken(client, logger, webhookToken)
+	webhook, err := webhookClientCreate(logger)
 	if err != nil {
 		return nil, err
 	}
 	return NewDisLog(webhook, levels...)
 }
 
-func NewDisLogByIDToken(client *http.Client, webhookLogLevel logrus.Level, webhookID string, webhookToken string, levels ...logrus.Level) (*DisLog, error) {
-	logger := logrus.New()
-	logger.SetLevel(webhookLogLevel)
-	webhook, err := disgohook.NewWebhookByIDToken(client, logger, webhookID, webhookToken)
-	if err != nil {
-		return nil, err
-	}
-	return NewDisLog(webhook, levels...)
+func NewDisLogByToken(httpClient *http.Client, webhookLogLevel logrus.Level, webhookToken string, levels ...logrus.Level) (*DisLog, error) {
+	return newDisLog(webhookLogLevel, func(logger log.Logger) (api.WebhookClient, error) {
+		return disgohook.NewWebhookClientByToken(httpClient, logger, webhookToken)
+	}, levels...)
 }
 
-func NewDisLog(webhook api.Webhook, levels ...logrus.Level) (*DisLog, error) {
+func NewDisLogByIDSnowflakeToken(httpClient *http.Client, webhookLogLevel logrus.Level, webhookID api.Snowflake, webhookToken string, levels ...logrus.Level) (*DisLog, error) {
+	return newDisLog(webhookLogLevel, func(logger log.Logger) (api.WebhookClient, error) {
+		return disgohook.NewWebhookClientByIDToken(httpClient, logger, webhookID, webhookToken)
+	}, levels...)
+}
 
+func NewDisLogByIDToken(httpClient *http.Client, webhookLogLevel logrus.Level, webhookID string, webhookToken string, levels ...logrus.Level) (*DisLog, error) {
+	return NewDisLogByIDSnowflakeToken(httpClient, webhookLogLevel, api.Snowflake(webhookID), webhookToken, levels...)
+}
+
+func NewDisLog(webhook api.WebhookClient, levels ...logrus.Level) (*DisLog, error) {
 	return &DisLog{
-		webhook: webhook,
-		queued:  false,
-		levels:  levels,
+		webhookClient: webhook,
+		queued:        false,
+		levels:        levels,
 	}, nil
 }
 
 type DisLog struct {
-	webhook  api.Webhook
-	lock     sync.Mutex
-	queued   bool
-	logQueue []*api.Embed
-	levels   []logrus.Level
+	webhookClient api.WebhookClient
+	lock          sync.Mutex
+	queued        bool
+	logQueue      []*api.Embed
+	levels        []logrus.Level
 }
 
 func (l *DisLog) Levels() []logrus.Level {
@@ -124,7 +130,7 @@ func (l *DisLog) sendEmbeds() {
 		return
 	}
 
-	_, err := l.webhook.SendMessage(message.Build())
+	_, err := l.webhookClient.SendMessage(message.Build())
 	if err != nil {
 		fmt.Printf("error while sending logs: %s\n", err)
 	}

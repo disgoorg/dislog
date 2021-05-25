@@ -9,7 +9,6 @@
 
 dislog is a [logrus](https://github.com/sirupsen/logrus) [logging hook](https://github.com/sirupsen/logrus#hooks) sending logs over [Discord Webhooks](https://discord.com/developers/docs/resources/webhook) using the [disgohook](https://github.com/DisgoOrg/dislog) library
 
-
 ## Getting Started
 
 ### Installing
@@ -39,6 +38,8 @@ defer dlog.Close()
 logger.AddHook(dlog)
 ```
 
+Builder example can bve found [here](https://github.com/DisgoOrg/dislog/tree/master/examples/builder_example/builder_example.go)
+
 ## Documentation
 
 Documentation is unfinished and can be found under
@@ -48,7 +49,7 @@ Documentation is unfinished and can be found under
 
 ## Examples
 
-You can find and example under [example](https://github.com/DisgoOrg/dislog/tree/master/example)
+You can find examples [here](https://github.com/DisgoOrg/dislog/tree/master/examples)
 
 ## Troubleshooting
 

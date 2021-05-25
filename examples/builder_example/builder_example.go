@@ -1,6 +1,7 @@
 package main
 
 import (
+	"net/http"
 	"os"
 	"time"
 
@@ -8,7 +9,10 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+var webhookToken = os.Getenv("webhook_token")
+
 var logger = logrus.New()
+var httpClient = http.DefaultClient
 
 func main() {
 	// override default trace color
@@ -21,9 +25,16 @@ func main() {
 	dislog.TimeFormatter = "2006-01-02 15:04:05 Z07"
 
 	logger.SetLevel(logrus.TraceLevel)
-	logger.Info("starting example...")
-	println(os.Getenv("webhook_token"))
-	dlog, err := dislog.NewDisLogByToken(nil, logrus.InfoLevel, os.Getenv("webhook_token"), dislog.TraceLevelAndAbove...)
+	logger.Info("starting examples...")
+	dlog, err := dislog.NewDisLogBuilder().
+		// Sets which logrus.LogLevel the webhook client should log at if none is passed
+		SetWebhookLoglevel(logrus.ErrorLevel).
+		SetWebhookIDToken(webhookToken).
+		// Sets a custom http client or nil for inbuilt
+		SetHttpClient(httpClient).
+		// Sets which logging levels to send to the webhook
+		SetLevels(dislog.TraceLevelAndAbove...).
+		Build()
 	if err != nil {
 		logger.Errorf("error initializing dislog %s", err)
 		return

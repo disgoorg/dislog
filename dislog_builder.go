@@ -11,58 +11,70 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-var ErrNoWebhookSet = errors.New("no webhook id token set")
+var ErrNoWebhookSet = errors.New("no webhookClient id token set")
 
-func NewDisLogBuilder() *DisLogBuilder {
-	return &DisLogBuilder{}
+func NewDisLogBuilder() *Builder {
+	return &Builder{}
 }
 
-type DisLogBuilder struct {
-	httpClient     *http.Client
-	logger         log.Logger
-	webhook        api.Webhook
-	webhookID      *string
-	webhookToken   *string
-	webhookIDToken *string
-	levels         []logrus.Level
+type Builder struct {
+	httpClient      *http.Client
+	logger          log.Logger
+	webhookClient   api.WebhookClient
+	webhookLogLevel *logrus.Level
+	webhookID       *api.Snowflake
+	webhookToken    *string
+	webhookIDToken  *string
+	levels          []logrus.Level
 }
 
-func (b *DisLogBuilder) SetHttpClient(httpClient *http.Client) *DisLogBuilder {
+func (b *Builder) SetHttpClient(httpClient *http.Client) *Builder {
 	b.httpClient = httpClient
 	return b
 }
 
-func (b *DisLogBuilder) SetLogger(logger log.Logger) *DisLogBuilder {
+func (b *Builder) SetLogger(logger log.Logger) *Builder {
 	b.logger = logger
 	return b
 }
 
-func (b *DisLogBuilder) SetWebhook(webhook api.Webhook) *DisLogBuilder {
-	b.webhook = webhook
+func (b *Builder) SetWebhookClient(webhookClient api.WebhookClient) *Builder {
+	b.webhookClient = webhookClient
 	return b
 }
 
-func (b *DisLogBuilder) SetWebhookIDToken(webhookIDToken string) *DisLogBuilder {
+func (b *Builder) SetWebhookLoglevel(webhookLogLevel logrus.Level) *Builder {
+	b.webhookLogLevel = &webhookLogLevel
+	return b
+}
+
+func (b *Builder) SetWebhookIDToken(webhookIDToken string) *Builder {
 	b.webhookIDToken = &webhookIDToken
 	return b
 }
 
-func (b *DisLogBuilder) SetSetWebhookID(webhookID string) *DisLogBuilder {
+func (b *Builder) SetSetWebhookID(webhookID string) *Builder {
+	snowflake := api.Snowflake(webhookID)
+	b.webhookID = &snowflake
+	return b
+}
+
+func (b *Builder) SetSetWebhookIDSnowflake(webhookID api.Snowflake) *Builder {
 	b.webhookID = &webhookID
 	return b
 }
 
-func (b *DisLogBuilder) SetSetWebhookToken(webhookToken string) *DisLogBuilder {
+func (b *Builder) SetSetWebhookToken(webhookToken string) *Builder {
 	b.webhookToken = &webhookToken
 	return b
 }
 
-func (b *DisLogBuilder) SetLevels(levels ...logrus.Level) *DisLogBuilder {
+func (b *Builder) SetLevels(levels ...logrus.Level) *Builder {
 	b.levels = levels
 	return b
 }
 
-func (b *DisLogBuilder) Build() (*DisLog, error) {
+func (b *Builder) Build() (*DisLog, error) {
 	dlog := &DisLog{}
 
 	if b.levels == nil {
@@ -79,20 +91,31 @@ func (b *DisLogBuilder) Build() (*DisLog, error) {
 		if len(webhookTokenSplit) != 2 {
 			return nil, api.ErrMalformedWebhookToken
 		}
-		b.webhookID = &webhookTokenSplit[0]
+		snowflake := api.Snowflake(webhookTokenSplit[0])
+		b.webhookID = &snowflake
 		b.webhookToken = &webhookTokenSplit[1]
 	}
 
-	if b.webhook == nil {
+	if b.logger == nil {
+		b.logger = logrus.New()
+	}
+
+	if b.webhookLogLevel == nil {
+		level := logrus.ErrorLevel
+		b.webhookLogLevel = &level
+	}
+
+	if b.webhookClient == nil {
 		if b.webhookID == nil || b.webhookToken == nil {
 			return nil, ErrNoWebhookSet
 		}
-		webhook, err := disgohook.NewWebhookByIDToken(b.httpClient, b.logger, *b.webhookID, *b.webhookToken)
+		var err error
+		b.webhookClient, err = disgohook.NewWebhookClientByIDToken(b.httpClient, b.logger, *b.webhookID, *b.webhookToken)
 		if err != nil {
 			return nil, err
 		}
-		b.webhook = webhook
 	}
+	dlog.webhookClient = b.webhookClient
 
 	return dlog, nil
 }

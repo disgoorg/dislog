@@ -1,12 +1,18 @@
 version: 2
 updates:
-- package-ecosystem: gomod
-  directory: "/"
-  schedule:
-    interval: daily
-  open-pull-requests-limit: 10
-- package-ecosystem: gomod
-  directory: "/example"
-  schedule:
-    interval: daily
-  open-pull-requests-limit: 10
+  - package-ecosystem: gomod
+    directory: "/"
+    schedule:
+      interval: daily
+    open-pull-requests-limit: 10
+  - package-ecosystem: gomod
+    directory: "/examples/factory_example"
+    schedule:
+      interval: daily
+    open-pull-requests-limit: 10
+  - package-ecosystem: gomod
+    directory: "/examples/builder_example"
+    schedule:
+      interval: daily
+    open-pull-requests-limit: 10
+
