@@ -86,7 +86,7 @@ type DisLog struct {
 	webhookClient api.WebhookClient
 	lock          sync.Mutex
 	queued        bool
-	logQueue      []*api.Embed
+	logQueue      []api.Embed
 	levels        []logrus.Level
 }
 
@@ -98,7 +98,7 @@ func (l *DisLog) Close() {
 	l.sendEmbeds()
 }
 
-func (l *DisLog) queueEmbed(embed *api.Embed, forceSend bool) error {
+func (l *DisLog) queueEmbed(embed api.Embed, forceSend bool) error {
 	l.logQueue = append(l.logQueue, embed)
 	if len(l.logQueue) >= MaxEmbeds || forceSend {
 		l.sendEmbeds()
@@ -114,7 +114,7 @@ func (l *DisLog) sendEmbeds() {
 	if len(l.logQueue) == 0 {
 		return
 	}
-	message := api.NewWebhookMessageBuilder()
+	message := api.NewWebhookMessageCreateBuilder()
 
 	for i := 0; i < len(l.logQueue); i++ {
 		if i >= MaxEmbeds {
