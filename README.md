@@ -38,7 +38,7 @@ defer dlog.Close()
 logger.AddHook(dlog)
 ```
 
-Builder example can bve found [here](https://github.com/DisgoOrg/dislog/tree/master/examples/builder_example/builder_example.go)
+Builder example can be found [here](https://github.com/DisgoOrg/dislog/tree/master/examples/builder_example/builder_example.go)
 
 ## Documentation
 
