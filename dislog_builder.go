@@ -97,7 +97,7 @@ func (b *Builder) Build() (*DisLog, error) {
 	}
 
 	if b.logger == nil {
-		b.logger = logrus.New()
+		b.logger = log.Default()
 	}
 
 	if b.webhookLogLevel == nil {
