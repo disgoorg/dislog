@@ -5,7 +5,7 @@
 [![Go Version](https://img.shields.io/github/go-mod/go-version/DisgoOrg/dislog)](https://golang.org/doc/devel/release.html)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/DisgoOrg/dislog/blob/master/LICENSE)
 [![Disgo Version](https://img.shields.io/github/v/release/DisgoOrg/dislog)](https://github.com/DisgoOrg/dislog/releases/latest)
-[![Disgo Discord](https://img.shields.io/badge/Disgo%20Discord-blue.svg)](https://discord.gg/mgjJeufk)
+[![Disgo Discord](https://img.shields.io/badge/Disgo%20Discord-blue.svg)](https://discord.gg/zQ4u3CdU3J)
 
 dislog is a [logrus](https://github.com/sirupsen/logrus) [logging hook](https://github.com/sirupsen/logrus#hooks) sending logs over [Discord Webhooks](https://discord.com/developers/docs/resources/webhook) using the [disgohook](https://github.com/DisgoOrg/dislog) library
 
@@ -53,11 +53,11 @@ You can find examples [here](https://github.com/DisgoOrg/dislog/tree/master/exam
 
 ## Troubleshooting
 
-For help feel free to open an issues or reach out on [Discord](https://discord.gg/mgjJeufk)
+For help feel free to open an issues or reach out on [Discord](https://discord.gg/zQ4u3CdU3J)
 
 ## Contributing
 
-Contributions are welcomed but for bigger changes please first reach out via [Discord](https://discord.gg/mgjJeufk) or create an issue to discuss your intentions and ideas.
+Contributions are welcomed but for bigger changes please first reach out via [Discord](https://discord.gg/zQ4u3CdU3J) or create an issue to discuss your intentions and ideas.
 
 ## License
 
