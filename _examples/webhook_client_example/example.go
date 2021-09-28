@@ -1,6 +1,10 @@
 package main
 
 import (
+	"github.com/DisgoOrg/disgo/discord"
+	"github.com/DisgoOrg/disgo/rest"
+	"github.com/DisgoOrg/disgo/webhook"
+	"net/http"
 	"os"
 	"time"
 
@@ -8,9 +12,13 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-var webhookToken = os.Getenv("webhook_token")
+var (
+	webhookID    = discord.Snowflake(os.Getenv("webhook_id"))
+	webhookToken = os.Getenv("webhook_token")
 
-var logger = logrus.New()
+	logger     = logrus.New()
+	httpClient = http.DefaultClient
+)
 
 func main() {
 	// override default trace color
@@ -23,8 +31,14 @@ func main() {
 	dislog.TimeFormatter = "2006-01-02 15:04:05 Z07"
 
 	logger.SetLevel(logrus.TraceLevel)
-	logger.Info("starting examples...")
-	dlog, err := dislog.NewDisLogByToken(nil, logrus.InfoLevel, webhookToken, dislog.TraceLevelAndAbove...)
+	logger.Info("starting example...")
+
+	dlog, err := dislog.New(
+		// Sets which logging levels to send to the webhook
+		dislog.WithLogLevels(dislog.TraceLevelAndAbove...),
+		// Sets a custom http client or nil for inbuilt
+		dislog.WithWebhookClient(webhook.NewClient(webhookID, webhookToken, webhook.WithRestClientConfigOpts(rest.WithHTTPClient(httpClient)))),
+	)
 	if err != nil {
 		logger.Errorf("error initializing dislog %s", err)
 		return

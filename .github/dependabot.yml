@@ -6,12 +6,12 @@ updates:
       interval: daily
     open-pull-requests-limit: 10
   - package-ecosystem: gomod
-    directory: "/examples/factory_example"
+    directory: "/_examples/webhook_client_example"
     schedule:
       interval: daily
     open-pull-requests-limit: 10
   - package-ecosystem: gomod
-    directory: "/examples/builder_example"
+    directory: "/_examples/id_token_example"
     schedule:
       interval: daily
     open-pull-requests-limit: 10

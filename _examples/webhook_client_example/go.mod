@@ -1,14 +1,17 @@
-module github.com/DisgoOrg/dislog
+module github.com/DisgoOrg/dislog/_examples/webhook_client_example
 
 go 1.17
 
+replace github.com/DisgoOrg/dislog => ../../
+
 require (
 	github.com/DisgoOrg/disgo v0.5.12-0.20210927235146-fb4bb75295bc
-	github.com/DisgoOrg/log v1.1.2
+	github.com/DisgoOrg/dislog v1.0.2
 	github.com/sirupsen/logrus v1.8.1
 )
 
 require (
+	github.com/DisgoOrg/log v1.1.2 // indirect
 	github.com/google/go-cmp v0.5.6 // indirect
 	github.com/gorilla/websocket v1.4.2 // indirect
 	github.com/pkg/errors v0.9.1 // indirect

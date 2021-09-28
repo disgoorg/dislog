@@ -1,15 +1,16 @@
 package dislog
 
 import (
+	"errors"
 	"fmt"
-	"net/http"
+	"github.com/DisgoOrg/disgo/core"
+	"github.com/DisgoOrg/disgo/discord"
+	"github.com/DisgoOrg/disgo/webhook"
+	"github.com/DisgoOrg/log"
 	"strconv"
 	"sync"
 	"time"
 
-	"github.com/DisgoOrg/disgohook"
-	"github.com/DisgoOrg/disgohook/api"
-	"github.com/DisgoOrg/log"
 	"github.com/sirupsen/logrus"
 )
 
@@ -48,45 +49,32 @@ var (
 	_ logrus.Hook = (*DisLog)(nil)
 )
 
-func newDisLog(webhookLogLevel logrus.Level, webhookClientCreate func(logger log.Logger) (api.WebhookClient, error), levels ...logrus.Level) (*DisLog, error) {
-	logger := logrus.New()
-	logger.SetLevel(webhookLogLevel)
-	webhook, err := webhookClientCreate(logger)
-	if err != nil {
-		return nil, err
+func New(opts ...ConfigOpt) (*DisLog, error) {
+	config := &DefaultConfig
+	config.Apply(opts)
+
+	if config.Logger == nil {
+		config.Logger = log.Default()
 	}
-	return NewDisLog(webhook, levels...)
-}
 
-func NewDisLogByToken(httpClient *http.Client, webhookLogLevel logrus.Level, webhookToken string, levels ...logrus.Level) (*DisLog, error) {
-	return newDisLog(webhookLogLevel, func(logger log.Logger) (api.WebhookClient, error) {
-		return disgohook.NewWebhookClientByToken(httpClient, logger, webhookToken)
-	}, levels...)
-}
-
-func NewDisLogByIDSnowflakeToken(httpClient *http.Client, webhookLogLevel logrus.Level, webhookID api.Snowflake, webhookToken string, levels ...logrus.Level) (*DisLog, error) {
-	return newDisLog(webhookLogLevel, func(logger log.Logger) (api.WebhookClient, error) {
-		return disgohook.NewWebhookClientByIDToken(httpClient, logger, webhookID, webhookToken)
-	}, levels...)
-}
-
-func NewDisLogByIDToken(httpClient *http.Client, webhookLogLevel logrus.Level, webhookID string, webhookToken string, levels ...logrus.Level) (*DisLog, error) {
-	return NewDisLogByIDSnowflakeToken(httpClient, webhookLogLevel, api.Snowflake(webhookID), webhookToken, levels...)
-}
-
-func NewDisLog(webhook api.WebhookClient, levels ...logrus.Level) (*DisLog, error) {
+	if config.WebhookClient == nil {
+		if config.WebhookID == "" || config.WebhookToken == "" {
+			return nil, errors.New("please provide either a webhook client or id & token")
+		}
+		config.WebhookClient = webhook.NewClient(config.WebhookID, config.WebhookToken, webhook.WithLogger(config.Logger))
+	}
 	return &DisLog{
-		webhookClient: webhook,
-		queued:        false,
-		levels:        levels,
+		webhookClient: config.WebhookClient,
+		levels:        config.LogLevels,
 	}, nil
 }
 
 type DisLog struct {
-	webhookClient api.WebhookClient
-	lock          sync.Mutex
+	sync.Mutex
+
+	webhookClient *webhook.Client
 	queued        bool
-	logQueue      []api.Embed
+	logQueue      []discord.Embed
 	levels        []logrus.Level
 }
 
@@ -98,28 +86,30 @@ func (l *DisLog) Close() {
 	l.sendEmbeds()
 }
 
-func (l *DisLog) queueEmbed(embed api.Embed, forceSend bool) error {
+func (l *DisLog) queueEmbed(embed discord.Embed, forceSend bool) error {
+	l.Lock()
+	defer l.Unlock()
 	l.logQueue = append(l.logQueue, embed)
 	if len(l.logQueue) >= MaxEmbeds || forceSend {
-		l.sendEmbeds()
+		go l.sendEmbeds()
 	} else {
-		l.queueSendEmbeds()
+		l.queueEmbeds()
 	}
 	return nil
 }
 
 func (l *DisLog) sendEmbeds() {
-	l.lock.Lock()
-	defer l.lock.Unlock()
+	l.Lock()
+	defer l.Unlock()
 	if len(l.logQueue) == 0 {
 		return
 	}
-	message := api.NewWebhookMessageCreateBuilder()
+	message := webhook.NewMessageCreateBuilder()
 
 	for i := 0; i < len(l.logQueue); i++ {
 		if i >= MaxEmbeds {
 			// queue again as we have logs to send
-			l.queueSendEmbeds()
+			l.queueEmbeds()
 			break
 		}
 		message.AddEmbeds(l.logQueue[i])
@@ -130,13 +120,13 @@ func (l *DisLog) sendEmbeds() {
 		return
 	}
 
-	_, err := l.webhookClient.SendMessage(message.Build())
+	_, err := l.webhookClient.CreateMessage(message.Build())
 	if err != nil {
 		fmt.Printf("error while sending logs: %s\n", err)
 	}
 }
 
-func (l *DisLog) queueSendEmbeds() {
+func (l *DisLog) queueEmbeds() {
 	if l.queued {
 		return
 	}
@@ -149,10 +139,10 @@ func (l *DisLog) queueSendEmbeds() {
 }
 
 func (l *DisLog) Fire(entry *logrus.Entry) error {
-	eb := api.NewEmbedBuilder().
+	eb := core.NewEmbedBuilder().
 		SetColor(*LevelColors[entry.Level]).
 		SetDescription(entry.Message).
-		AddField("Level", entry.Level.String(), true).
+		AddField("LogLevel", entry.Level.String(), true).
 		AddField("Time", entry.Time.Format(TimeFormatter), true)
 	if entry.HasCaller() {
 		eb.SetDescription("in file: " + entry.Caller.File + " from func: " + entry.Caller.Function + " in line: " + strconv.Itoa(entry.Caller.Line) + "\n" + entry.Message)
