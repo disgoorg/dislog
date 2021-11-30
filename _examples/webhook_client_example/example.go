@@ -15,12 +15,10 @@ import (
 var (
 	webhookID    = discord.Snowflake(os.Getenv("webhook_id"))
 	webhookToken = os.Getenv("webhook_token")
-
-	logger     = logrus.New()
-	httpClient = http.DefaultClient
 )
 
 func main() {
+	logger := logrus.New()
 	// override default trace color
 	dislog.TraceLevelColor = 0xd400ff
 
@@ -37,7 +35,7 @@ func main() {
 		// Sets which logging levels to send to the webhook
 		dislog.WithLogLevels(dislog.TraceLevelAndAbove...),
 		// Sets a custom http client or nil for inbuilt
-		dislog.WithWebhookClient(webhook.NewClient(webhookID, webhookToken, webhook.WithRestClientConfigOpts(rest.WithHTTPClient(httpClient)))),
+		dislog.WithWebhookClient(webhook.NewClient(webhookID, webhookToken, webhook.WithRestClientConfigOpts(rest.WithHTTPClient(http.DefaultClient)))),
 	)
 	if err != nil {
 		logger.Errorf("error initializing dislog %s", err)
@@ -51,8 +49,8 @@ func main() {
 	logger.Info("info log")
 	logger.Warn("warn log")
 	logger.Error("error log")
-	// Calls os.Exit(1) after logging
-	logger.Fatal("fatal log")
 	// Calls panic() after logging
 	logger.Panic("panic log")
+	// Calls os.Exit(1) after logging
+	logger.Fatal("fatal log")
 }

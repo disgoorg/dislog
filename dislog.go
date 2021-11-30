@@ -3,7 +3,6 @@ package dislog
 import (
 	"errors"
 	"fmt"
-	"github.com/DisgoOrg/disgo/core"
 	"github.com/DisgoOrg/disgo/discord"
 	"github.com/DisgoOrg/disgo/webhook"
 	"github.com/DisgoOrg/log"
@@ -74,7 +73,7 @@ type DisLog struct {
 
 	webhookClient *webhook.Client
 	queued        bool
-	logQueue      []discord.Embed
+	queue         []discord.Embed
 	levels        []logrus.Level
 }
 
@@ -89,8 +88,8 @@ func (l *DisLog) Close() {
 func (l *DisLog) queueEmbed(embed discord.Embed, forceSend bool) error {
 	l.Lock()
 	defer l.Unlock()
-	l.logQueue = append(l.logQueue, embed)
-	if len(l.logQueue) >= MaxEmbeds || forceSend {
+	l.queue = append(l.queue, embed)
+	if len(l.queue) >= MaxEmbeds || forceSend {
 		go l.sendEmbeds()
 	} else {
 		l.queueEmbeds()
@@ -101,19 +100,19 @@ func (l *DisLog) queueEmbed(embed discord.Embed, forceSend bool) error {
 func (l *DisLog) sendEmbeds() {
 	l.Lock()
 	defer l.Unlock()
-	if len(l.logQueue) == 0 {
+	if len(l.queue) == 0 {
 		return
 	}
-	message := webhook.NewMessageCreateBuilder()
+	message := discord.NewWebhookMessageCreateBuilder()
 
-	for i := 0; i < len(l.logQueue); i++ {
+	for i := 0; i < len(l.queue); i++ {
 		if i >= MaxEmbeds {
 			// queue again as we have logs to send
 			l.queueEmbeds()
 			break
 		}
-		message.AddEmbeds(l.logQueue[i])
-		l.logQueue = append(l.logQueue[:i], l.logQueue[i+1:]...)
+		message.AddEmbeds(l.queue[i])
+		l.queue = append(l.queue[:i], l.queue[i+1:]...)
 		i--
 	}
 	if len(message.Embeds) == 0 {
@@ -139,7 +138,7 @@ func (l *DisLog) queueEmbeds() {
 }
 
 func (l *DisLog) Fire(entry *logrus.Entry) error {
-	eb := core.NewEmbedBuilder().
+	eb := discord.NewEmbedBuilder().
 		SetColor(*LevelColors[entry.Level]).
 		SetDescription(entry.Message).
 		AddField("LogLevel", entry.Level.String(), true).
