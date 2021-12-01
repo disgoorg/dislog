@@ -55,11 +55,11 @@ You can find examples [here](https://github.com/DisgoOrg/dislog/tree/master/_exa
 
 ## Troubleshooting
 
-For help feel free to open an issues or reach out on [Discord](https://discord.gg/mgjJeufk)
+For help feel free to open an issues or reach out on [Discord](https://discord.gg/BDfhKG7Ce8)
 
 ## Contributing
 
-Contributions are welcomed but for bigger changes please first reach out via [Discord](https://discord.gg/mgjJeufk) or create an issue to discuss your intentions and ideas.
+Contributions are welcomed but for bigger changes please first reach out via [Discord](https://discord.gg/BDfhKG7Ce8) or create an issue to discuss your intentions and ideas.
 
 ## License
 
