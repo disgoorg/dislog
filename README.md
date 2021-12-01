@@ -1,11 +1,11 @@
-# dislog
-
 [![Go Reference](https://pkg.go.dev/badge/github.com/DisgoOrg/dislog.svg)](https://pkg.go.dev/github.com/DisgoOrg/dislog)
 [![Go Report](https://goreportcard.com/badge/github.com/DisgoOrg/dislog)](https://goreportcard.com/report/github.com/DisgoOrg/dislog)
 [![Go Version](https://img.shields.io/github/go-mod/go-version/DisgoOrg/dislog)](https://golang.org/doc/devel/release.html)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/DisgoOrg/dislog/blob/master/LICENSE)
 [![Disgo Version](https://img.shields.io/github/v/release/DisgoOrg/dislog)](https://github.com/DisgoOrg/dislog/releases/latest)
 [![Disgo Discord](https://discord.com/api/guilds/817327181659111454/widget.png)](https://discord.gg/BDfhKG7Ce8)
+
+# dislog
 
 dislog is a [logrus](https://github.com/sirupsen/logrus) [logging hook](https://github.com/sirupsen/logrus#hooks) sending logs over [Discord Webhooks](https://discord.com/developers/docs/resources/webhook) using the [disgohook](https://github.com/DisgoOrg/dislog) library
 
