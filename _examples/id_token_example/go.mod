@@ -5,7 +5,7 @@ go 1.17
 replace github.com/DisgoOrg/dislog => ../../
 
 require (
-	github.com/DisgoOrg/disgo v0.6.1
+	github.com/DisgoOrg/disgo v0.6.6
 	github.com/DisgoOrg/dislog v1.0.2
 	github.com/sirupsen/logrus v1.8.1
 )
