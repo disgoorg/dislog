@@ -3,7 +3,7 @@ module github.com/DisgoOrg/dislog
 go 1.17
 
 require (
-	github.com/DisgoOrg/disgo v0.6.8
+	github.com/DisgoOrg/disgo v0.6.12
 	github.com/DisgoOrg/log v1.1.2
 	github.com/sirupsen/logrus v1.8.1
 )
