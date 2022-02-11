@@ -1,16 +1,16 @@
 package main
 
 import (
-	"github.com/DisgoOrg/disgo/discord"
 	"os"
 	"time"
 
 	"github.com/DisgoOrg/dislog"
+	"github.com/DisgoOrg/snowflake"
 	"github.com/sirupsen/logrus"
 )
 
 var (
-	webhookID    = discord.Snowflake(os.Getenv("webhook_id"))
+	webhookID    = snowflake.Snowflake(os.Getenv("webhook_id"))
 	webhookToken = os.Getenv("webhook_token")
 )
 

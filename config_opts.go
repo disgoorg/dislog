@@ -1,9 +1,9 @@
 package dislog
 
 import (
-	"github.com/DisgoOrg/disgo/discord"
 	"github.com/DisgoOrg/disgo/webhook"
 	"github.com/DisgoOrg/log"
+	"github.com/DisgoOrg/snowflake"
 	"github.com/sirupsen/logrus"
 )
 
@@ -15,7 +15,7 @@ var DefaultConfig = Config{
 type Config struct {
 	Logger        log.Logger
 	LogLevels     []logrus.Level
-	WebhookID     discord.Snowflake
+	WebhookID     snowflake.Snowflake
 	WebhookToken  string
 	WebhookClient *webhook.Client
 }
@@ -40,7 +40,7 @@ func WithLogLevels(levels ...logrus.Level) ConfigOpt {
 	}
 }
 
-func WithWebhookIDToken(webhookID discord.Snowflake, webhookToken string) ConfigOpt {
+func WithWebhookIDToken(webhookID snowflake.Snowflake, webhookToken string) ConfigOpt {
 	return func(config *Config) {
 		config.WebhookID = webhookID
 		config.WebhookToken = webhookToken

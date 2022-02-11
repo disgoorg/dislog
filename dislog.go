@@ -3,12 +3,13 @@ package dislog
 import (
 	"errors"
 	"fmt"
-	"github.com/DisgoOrg/disgo/discord"
-	"github.com/DisgoOrg/disgo/webhook"
-	"github.com/DisgoOrg/log"
 	"strconv"
 	"sync"
 	"time"
+
+	"github.com/DisgoOrg/disgo/discord"
+	"github.com/DisgoOrg/disgo/webhook"
+	"github.com/DisgoOrg/log"
 
 	"github.com/sirupsen/logrus"
 )
