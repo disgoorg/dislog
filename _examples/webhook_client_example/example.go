@@ -1,15 +1,16 @@
 package main
 
 import (
+	"context"
 	"net/http"
 	"os"
 	"time"
 
-	"github.com/DisgoOrg/disgo/rest"
-	"github.com/DisgoOrg/disgo/webhook"
-	"github.com/DisgoOrg/snowflake"
+	"github.com/disgoorg/disgo/rest"
+	"github.com/disgoorg/disgo/webhook"
+	"github.com/disgoorg/snowflake"
 
-	"github.com/DisgoOrg/dislog"
+	"github.com/disgoorg/dislog"
 	"github.com/sirupsen/logrus"
 )
 
@@ -32,7 +33,7 @@ func main() {
 	logger.SetLevel(logrus.TraceLevel)
 	logger.Info("starting example...")
 
-	dlog, err := dislog.New(
+	hook, err := dislog.New(
 		// Sets which logging levels to send to the webhook
 		dislog.WithLogLevels(dislog.TraceLevelAndAbove...),
 		// Sets a custom http client or nil for inbuilt
@@ -42,8 +43,8 @@ func main() {
 		logger.Errorf("error initializing dislog %s", err)
 		return
 	}
-	defer dlog.Close()
-	logger.AddHook(dlog)
+	defer hook.Close(context.TODO())
+	logger.AddHook(hook)
 
 	logger.Trace("trace log")
 	logger.Debug("debug log")

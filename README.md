@@ -1,20 +1,20 @@
-[![Go Reference](https://pkg.go.dev/badge/github.com/DisgoOrg/dislog.svg)](https://pkg.go.dev/github.com/DisgoOrg/dislog)
-[![Go Report](https://goreportcard.com/badge/github.com/DisgoOrg/dislog)](https://goreportcard.com/report/github.com/DisgoOrg/dislog)
-[![Go Version](https://img.shields.io/github/go-mod/go-version/DisgoOrg/dislog)](https://golang.org/doc/devel/release.html)
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/DisgoOrg/dislog/blob/master/LICENSE)
-[![Disgo Version](https://img.shields.io/github/v/release/DisgoOrg/dislog)](https://github.com/DisgoOrg/dislog/releases/latest)
+[![Go Reference](https://pkg.go.dev/badge/github.com/disgoorg/dislog.svg)](https://pkg.go.dev/github.com/disgoorg/dislog)
+[![Go Report](https://goreportcard.com/badge/github.com/disgoorg/dislog)](https://goreportcard.com/report/github.com/disgoorg/dislog)
+[![Go Version](https://img.shields.io/github/go-mod/go-version/disgoorg/dislog)](https://golang.org/doc/devel/release.html)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/disgoorg/dislog/blob/master/LICENSE)
+[![Disgo Version](https://img.shields.io/github/v/release/disgoorg/dislog)](https://github.com/disgoorg/dislog/releases/latest)
 [![Disgo Discord](https://discord.com/api/guilds/817327181659111454/widget.png)](https://discord.gg/BDfhKG7Ce8)
 
 # dislog
 
-dislog is a [logrus](https://github.com/sirupsen/logrus) [logging hook](https://github.com/sirupsen/logrus#hooks) sending logs over [Discord Webhooks](https://discord.com/developers/docs/resources/webhook) using the [disgohook](https://github.com/DisgoOrg/dislog) library
+dislog is a [logrus](https://github.com/sirupsen/logrus) [logging hook](https://github.com/sirupsen/logrus#hooks) sending logs over [Discord Webhooks](https://discord.com/developers/docs/resources/webhook) using the [disgohook](https://github.com/disgoorg/dislog) library
 
 ## Getting Started
 
 ### Installing
 
 ```sh
-go get github.com/DisgoOrg/dislog
+go get github.com/disgoorg/dislog
 ```
 
 ### Usage
@@ -22,7 +22,7 @@ go get github.com/DisgoOrg/dislog
 Import the package into your project.
 
 ```go
-import "github.com/DisgoOrg/dislog"
+import "github.com/disgoorg/dislog"
 ```
 
 Create a new [logrus](https://github.com/sirupsen/logrus) logger then create a new dislog instance by providing the webhook id and webhook token.
@@ -46,12 +46,12 @@ logger.AddHook(dlog)
 
 Documentation can be found here
 
-* [![Go Reference](https://pkg.go.dev/badge/github.com/DisgoOrg/dislog.svg)](https://pkg.go.dev/github.com/DisgoOrg/dislog)
+* [![Go Reference](https://pkg.go.dev/badge/github.com/disgoorg/dislog.svg)](https://pkg.go.dev/github.com/disgoorg/dislog)
 * [![logrus Hooks Documentation](https://img.shields.io/badge/logrus%20Documentation-blue.svg)](https://github.com/sirupsen/logrus#hooks)
 
 ## Examples
 
-You can find examples [here](https://github.com/DisgoOrg/dislog/tree/master/_examples)
+You can find examples [here](https://github.com/disgoorg/dislog/tree/master/_examples)
 
 ## Troubleshooting
 
@@ -63,4 +63,4 @@ Contributions are welcomed but for bigger changes please first reach out via [Di
 
 ## License
 
-Distributed under the [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/DisgoOrg/dislog/blob/master/LICENSE). See LICENSE for more information.
+Distributed under the [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/disgoorg/dislog/blob/master/LICENSE). See LICENSE for more information.

@@ -1,23 +1,26 @@
 package dislog
 
 import (
-	"github.com/DisgoOrg/disgo/webhook"
-	"github.com/DisgoOrg/log"
-	"github.com/DisgoOrg/snowflake"
+	"github.com/disgoorg/disgo/webhook"
+	"github.com/disgoorg/log"
+	"github.com/disgoorg/snowflake"
 	"github.com/sirupsen/logrus"
 )
 
-var DefaultConfig = Config{
-	Logger:    log.Default(),
-	LogLevels: ErrorLevelAndAbove,
+func DefaultConfig() *Config {
+	return &Config{
+		Logger:    log.Default(),
+		LogLevels: ErrorLevelAndAbove,
+	}
 }
 
 type Config struct {
-	Logger        log.Logger
-	LogLevels     []logrus.Level
+	Logger    log.Logger
+	LogLevels []logrus.Level
+
 	WebhookID     snowflake.Snowflake
 	WebhookToken  string
-	WebhookClient *webhook.Client
+	WebhookClient webhook.Client
 }
 
 type ConfigOpt func(config *Config)
@@ -25,6 +28,9 @@ type ConfigOpt func(config *Config)
 func (c *Config) Apply(opts []ConfigOpt) {
 	for _, opt := range opts {
 		opt(c)
+	}
+	if c.WebhookClient == nil && c.WebhookID != "" && c.WebhookToken != "" {
+		c.WebhookClient = webhook.NewClient(c.WebhookID, c.WebhookToken)
 	}
 }
 
@@ -47,7 +53,7 @@ func WithWebhookIDToken(webhookID snowflake.Snowflake, webhookToken string) Conf
 	}
 }
 
-func WithWebhookClient(webhookClient *webhook.Client) ConfigOpt {
+func WithWebhookClient(webhookClient webhook.Client) ConfigOpt {
 	return func(config *Config) {
 		config.WebhookClient = webhookClient
 	}

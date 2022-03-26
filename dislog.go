@@ -1,16 +1,14 @@
 package dislog
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"strconv"
 	"sync"
 	"time"
 
-	"github.com/DisgoOrg/disgo/discord"
-	"github.com/DisgoOrg/disgo/webhook"
-	"github.com/DisgoOrg/log"
-
+	"github.com/disgoorg/disgo/discord"
 	"github.com/sirupsen/logrus"
 )
 
@@ -50,45 +48,38 @@ var (
 )
 
 func New(opts ...ConfigOpt) (*DisLog, error) {
-	config := &DefaultConfig
+	config := DefaultConfig()
 	config.Apply(opts)
 
-	if config.Logger == nil {
-		config.Logger = log.Default()
+	if config.WebhookID == "" || config.WebhookToken == "" {
+		return nil, errors.New("Webhook ID & token or a webhook client are required")
 	}
 
-	if config.WebhookClient == nil {
-		if config.WebhookID == "" || config.WebhookToken == "" {
-			return nil, errors.New("please provide either a webhook client or id & token")
-		}
-		config.WebhookClient = webhook.NewClient(config.WebhookID, config.WebhookToken, webhook.WithLogger(config.Logger))
-	}
 	return &DisLog{
-		webhookClient: config.WebhookClient,
-		levels:        config.LogLevels,
+		config: *config,
 	}, nil
 }
 
 type DisLog struct {
-	sync.Mutex
+	config Config
 
-	webhookClient *webhook.Client
-	queued        bool
-	queue         []discord.Embed
-	levels        []logrus.Level
+	queued  bool
+	queue   []discord.Embed
+	queueMu sync.Mutex
 }
 
 func (l *DisLog) Levels() []logrus.Level {
-	return l.levels
+	return l.config.LogLevels
 }
 
-func (l *DisLog) Close() {
+func (l *DisLog) Close(ctx context.Context) {
 	l.sendEmbeds()
+	l.config.WebhookClient.Close(ctx)
 }
 
 func (l *DisLog) queueEmbed(embed discord.Embed, forceSend bool) error {
-	l.Lock()
-	defer l.Unlock()
+	l.queueMu.Lock()
+	defer l.queueMu.Unlock()
 	l.queue = append(l.queue, embed)
 	if len(l.queue) >= MaxEmbeds || forceSend {
 		go l.sendEmbeds()
@@ -99,8 +90,8 @@ func (l *DisLog) queueEmbed(embed discord.Embed, forceSend bool) error {
 }
 
 func (l *DisLog) sendEmbeds() {
-	l.Lock()
-	defer l.Unlock()
+	l.queueMu.Lock()
+	defer l.queueMu.Unlock()
 	if len(l.queue) == 0 {
 		return
 	}
@@ -120,7 +111,7 @@ func (l *DisLog) sendEmbeds() {
 		return
 	}
 
-	_, err := l.webhookClient.CreateMessage(message.Build())
+	_, err := l.config.WebhookClient.CreateMessage(message.Build())
 	if err != nil {
 		fmt.Printf("error while sending logs: %s\n", err)
 	}
