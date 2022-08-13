@@ -55,7 +55,7 @@ You can find examples [here](https://github.com/disgoorg/dislog/tree/master/_exa
 
 ## Troubleshooting
 
-For help feel free to open an issues or reach out on [Discord](https://discord.gg/BDfhKG7Ce8)
+For help feel free to open an issue or reach out on [Discord](https://discord.gg/BDfhKG7Ce8)
 
 ## Contributing
 
