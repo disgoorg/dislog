@@ -3,7 +3,7 @@ package dislog
 import (
 	"github.com/disgoorg/disgo/webhook"
 	"github.com/disgoorg/log"
-	"github.com/disgoorg/snowflake"
+	"github.com/disgoorg/snowflake/v2"
 	"github.com/sirupsen/logrus"
 )
 
@@ -18,7 +18,7 @@ type Config struct {
 	Logger    log.Logger
 	LogLevels []logrus.Level
 
-	WebhookID     snowflake.Snowflake
+	WebhookID     snowflake.ID
 	WebhookToken  string
 	WebhookClient webhook.Client
 }
@@ -29,8 +29,8 @@ func (c *Config) Apply(opts []ConfigOpt) {
 	for _, opt := range opts {
 		opt(c)
 	}
-	if c.WebhookClient == nil && c.WebhookID != "" && c.WebhookToken != "" {
-		c.WebhookClient = webhook.NewClient(c.WebhookID, c.WebhookToken)
+	if c.WebhookClient == nil && c.WebhookID != 0 && c.WebhookToken != "" {
+		c.WebhookClient = webhook.New(c.WebhookID, c.WebhookToken)
 	}
 }
 
@@ -46,7 +46,7 @@ func WithLogLevels(levels ...logrus.Level) ConfigOpt {
 	}
 }
 
-func WithWebhookIDToken(webhookID snowflake.Snowflake, webhookToken string) ConfigOpt {
+func WithWebhookIDToken(webhookID snowflake.ID, webhookToken string) ConfigOpt {
 	return func(config *Config) {
 		config.WebhookID = webhookID
 		config.WebhookToken = webhookToken
