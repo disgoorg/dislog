@@ -8,14 +8,14 @@ import (
 
 	"github.com/disgoorg/disgo/rest"
 	"github.com/disgoorg/disgo/webhook"
-	"github.com/disgoorg/snowflake"
+	"github.com/disgoorg/snowflake/v2"
 
 	"github.com/disgoorg/dislog"
 	"github.com/sirupsen/logrus"
 )
 
 var (
-	webhookID    = snowflake.GetSnowflakeEnv("webhook_id")
+	webhookID    = snowflake.GetEnv("webhook_id")
 	webhookToken = os.Getenv("webhook_token")
 )
 
@@ -37,7 +37,7 @@ func main() {
 		// Sets which logging levels to send to the webhook
 		dislog.WithLogLevels(dislog.TraceLevelAndAbove...),
 		// Sets a custom http client or nil for inbuilt
-		dislog.WithWebhookClient(webhook.NewClient(webhookID, webhookToken, webhook.WithRestClientConfigOpts(rest.WithHTTPClient(http.DefaultClient)))),
+		dislog.WithWebhookClient(webhook.New(webhookID, webhookToken, webhook.WithRestClientConfigOpts(rest.WithHTTPClient(http.DefaultClient)))),
 	)
 	if err != nil {
 		logger.Errorf("error initializing dislog %s", err)

@@ -6,12 +6,12 @@ import (
 	"time"
 
 	"github.com/disgoorg/dislog"
-	"github.com/disgoorg/snowflake"
+	"github.com/disgoorg/snowflake/v2"
 	"github.com/sirupsen/logrus"
 )
 
 var (
-	webhookID    = snowflake.Snowflake(os.Getenv("webhook_id"))
+	webhookID    = snowflake.GetEnv("webhook_id")
 	webhookToken = os.Getenv("webhook_token")
 )
 

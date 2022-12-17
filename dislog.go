@@ -52,7 +52,7 @@ func New(opts ...ConfigOpt) (*DisLog, error) {
 	config.Apply(opts)
 
 	if config.WebhookID == 0 || config.WebhookToken == "" {
-		return nil, errors.New("Webhook ID & token or a webhook client are required")
+		return nil, errors.New("webhook ID & token or a webhook client are required")
 	}
 
 	return &DisLog{
